@@ -1,3 +1,7 @@
 target/
 test-output/
 *.class
+.vscode/
+data.txt
+.classpath
+.project
