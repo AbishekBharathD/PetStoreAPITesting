@@ -7,7 +7,7 @@ import io.restassured.specification.RequestSpecification;
 
 public class BaseTest {
 
-	protected RequestSpecification requestSpec;
+	protected static RequestSpecification requestSpec;
 		
 		public void setup() {
 			requestSpec = new RequestSpecBuilder()
