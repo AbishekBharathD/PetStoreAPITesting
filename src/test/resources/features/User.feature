@@ -1,3 +1,9 @@
+# ---------------------------------------------------------
+# Author : Adithya P and Arun Balaji B
+# Module : User
+# Description : Testing User Module in PetStore API
+# ---------------------------------------------------------
+
 Feature: User Module Testing
 
 # POST /user
