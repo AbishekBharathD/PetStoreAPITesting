@@ -23,10 +23,9 @@ public class UserStep extends BaseTest{
         Assertions.setResponse(response);
     }
     
-    @When("I Send POST request to create a user with the following details:")
-    public void createUser(DataTable dataTable) {
-        Map<String, String> row = dataTable.asMaps().get(0);
-        String body = DataUtility.buildUserJson(row);
+    @When("I Send POST request to create a user {string} {string} {string} {string} {string} {string} {string} {string}:")
+    public void createUser(String id, String userName, String firstName, String lastName, String email, String password, String phone, String userStatus) {
+        String body = DataUtility.buildUserJson(Integer.parseInt(id), userName, firstName, lastName, email, password, phone, Integer.parseInt(userStatus));
  
         response = RestAssured
                 .given()

@@ -8,12 +8,16 @@ Feature: User Module Testing
 
 # POST /user
 Scenario: Create User with Valid Payload
-    When I Send POST request to create a user with the following details:
-      | id       | username  | firstName | lastName | email              | password  | phone       | userStatus |
-      | 1001     | TestUser  | John      | Doe      | john@example.com   | Pass@1234 | 9876543210  | 1          |
+    When I Send POST request to create a user "<id>" "<username>" "<firstName>" "<lastName>" "<email>" "<password>" "<phone>" "<userStatus>":
     Then Response status code should be 200
     And Response status line contains "200 OK"
     And Response time less than 2000 ms
+  
+  Examples:
+    | id       | username       | firstName | lastName | email                 | password  | phone       | userStatus |
+    | 1001     | TestUser       | John      | Doe      | john@example.com      | Pass@1234 | 9876543210  | 1          |
+    | 1002     | TesterBalaji   | Arun      | Balaji   | arun@example.com      | Pass@1234 | 7894561230  | 1          |
+    | 1003     | TesterAdithya  | Adithya   | P        | adithya@example.com   | Pass@1234 | 9874563210  | 1          |
 
 Scenario: Create User with Missing Required Fields
     When I Send POST request to create a user with empty body
