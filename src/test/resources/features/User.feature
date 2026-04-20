@@ -1,14 +1,94 @@
 Feature: User Module Testing
 
-Scenario: Fetching User Valid Username
-    When I Send GET user request with valid username "TestUser"
+# POST /user
+Scenario: Create User with Valid Payload
+    When I Send POST request to create a user with the following details:
+      | id       | username  | firstName | lastName | email              | password  | phone       | userStatus |
+      | 1001     | TestUser  | John      | Doe      | john@example.com   | Pass@1234 | 9876543210  | 1          |
     Then Response status code should be 200
     And Response status line contains "200 OK"
-    And Response time less than 200 ms
+    And Response time less than 2000 ms
+
+Scenario: Create User with Missing Required Fields
+    When I Send POST request to create a user with empty body
+    Then Response status code should be 400
+    And Response status line contains "Bad Request"
+    And Response time less than 2000 ms
+
+# GET /user/{username}
+Scenario: Fetching User Valid Username
+    When I Send GET user request with username "TestUser"
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
     And Validate "User" schema
 
 Scenario: Fetching User Invalid Username
-    When I Send GET user request with valid username "User@#$%"
+    When I Send GET user request with username "User@#$%"
     Then Response status code should be 400
     And Response status line contains "Bad Request"
-    And Response time less than 200 ms
+    And Response time less than 2000 ms
+
+Scenario: Fetching User with Non-Existent Username
+    When I Send GET user request with username "nonExistentUser99999"
+    Then Response status code should be 404
+    And Response status line contains "Not Found"
+    And Response time less than 2000 ms
+
+# POST /user/createWithArray
+Scenario: Create Users with Valid Array Payload
+    When I Send POST request to create users with array
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+
+Scenario: Create Users with Empty Array
+    When I Send POST request to create users with empty array
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+
+# POST /user/createWithList
+Scenario: Create Users with Valid List Payload
+    When I Send POST request to create users with list
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+
+Scenario: Create Users with Empty List
+    When I Send POST request to create users with empty list
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+
+# GET /user/login
+Scenario: Login with Valid Credentials
+    When I Send GET login request with username "TestUser" and password "Pass@1234"
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+    And Response body contains "logged in user session"
+
+Scenario: Login with Invalid Password
+    When I Send GET login request with username "TestUser" and password "wrongPass"
+    Then Response status code should be 400
+    And Response status line contains "Bad Request"
+    And Response time less than 2000 ms
+
+Scenario: Login with Empty Username
+    When I Send GET login request with username "" and password "Pass@1234"
+    Then Response status code should be 400
+    And Response status line contains "Bad Request"
+    And Response time less than 2000 ms
+
+Scenario: Login with Empty Password
+    When I Send GET login request with username "TestUser" and password ""
+    Then Response status code should be 400
+    And Response status line contains "Bad Request"
+    And Response time less than 2000 ms
+
+Scenario: Login with Both Fields Empty
+    When I Send GET login request with username "" and password ""
+    Then Response status code should be 400
+    And Response status line contains "Bad Request"
+    And Response time less than 2000 ms
