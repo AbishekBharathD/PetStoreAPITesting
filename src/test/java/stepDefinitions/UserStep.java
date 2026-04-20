@@ -1,13 +1,15 @@
 package stepDefinitions;
 
+import java.util.Map;
+
+import base.BaseTest;
 import endpoints.IPetStoreEndpoint;
-import io.cucumber.java.en.*;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import java.util.Map;
-import base.BaseTest;
 import utils.DataUtility;
+import utils.ExcelUtility;
 
 public class UserStep extends BaseTest{
     Response response;
@@ -125,6 +127,33 @@ public class UserStep extends BaseTest{
         Assertions.setResponse(response);
     }
 
+    @When("I Send PUT request to update user {string} with data from excel")
+    public void updateUserUsingExcel(String username) {
+        String userName, firstName, lastName, email, password, phone;
+        int id, userStatus;
+
+        ExcelUtility.loadExcel("user.xlsx", "Sheet1");
+        id = Integer.parseInt(ExcelUtility.getCellData(1, 0));
+        userName = ExcelUtility.getCellData(1, 1);
+        firstName = ExcelUtility.getCellData(1,2);
+        lastName = ExcelUtility.getCellData(1, 3);
+        email = ExcelUtility.getCellData(1, 4);
+        password = ExcelUtility.getCellData(1, 5);
+        phone = ExcelUtility.getCellData(1, 6);
+        userStatus = Integer.parseInt(ExcelUtility.getCellData(1, 7));
+
+        String body = DataUtility.buildUserJson(id, userName, firstName, lastName, email, password, phone, userStatus);
+
+        response = RestAssured
+                .given()
+                    .spec(requestSpec)
+                    .pathParam("username", username)
+                    .body(body)
+                .when()
+                    .put(IPetStoreEndpoint.UPDATE_USER);
+        Assertions.setResponse(response);
+    }
+
     @When("I Send PUT request to update user {string} with the following details:")
     public void updateUser(String username, DataTable dataTable) {
         Map<String, String> row = dataTable.asMaps().get(0);
@@ -139,7 +168,7 @@ public class UserStep extends BaseTest{
                     .put(IPetStoreEndpoint.UPDATE_USER);
         Assertions.setResponse(response);
     }
-
+    
     @When("I Send PUT request to update user {string} with empty body")
     public void updateUserWithEmptyBody(String username) {
         response = RestAssured

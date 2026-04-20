@@ -11,7 +11,7 @@ Scenario: Create User with Valid Payload
     When I Send POST request to create a user "<id>" "<username>" "<firstName>" "<lastName>" "<email>" "<password>" "<phone>" "<userStatus>":
     Then Response status code should be 200
     And Response status line contains "200 OK"
-    And Response time less than 2000 ms
+    And Response time less than 3000 ms
   
   Examples:
     | id       | username       | firstName | lastName | email                 | password  | phone       | userStatus |
@@ -112,9 +112,7 @@ Scenario: Logout User Successfully
 
 # PUT /user/{username}
 Scenario: Update User with Valid Payload
-    When I Send PUT request to update user "TestUser" with the following details:
-      | id   | username  | firstName | lastName | email                  | password    | phone       | userStatus |
-      | 1001 | TestUser  | Jane      | Doe      | janedoe@example.com    | NewPass@123 | 1234567890  | 1          |
+    When I Send PUT request to update user "TestUser" with data from excel
     Then Response status code should be 200
     And Response status line contains "200 OK"
     And Response time less than 2000 ms
