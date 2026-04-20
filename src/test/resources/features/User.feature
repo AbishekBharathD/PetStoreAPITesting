@@ -92,3 +92,52 @@ Scenario: Login with Both Fields Empty
     Then Response status code should be 400
     And Response status line contains "Bad Request"
     And Response time less than 2000 ms
+
+# GET /user/logout
+Scenario: Logout User Successfully
+    When I Send GET logout request
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+
+# PUT /user/{username}
+Scenario: Update User with Valid Payload
+    When I Send PUT request to update user "TestUser" with the following details:
+      | id   | username  | firstName | lastName | email                  | password    | phone       | userStatus |
+      | 1001 | TestUser  | Jane      | Doe      | janedoe@example.com    | NewPass@123 | 1234567890  | 1          |
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+
+Scenario: Update Non-Existent User
+    When I Send PUT request to update user "nonExistentUser99999" with the following details:
+      | id   | username             | firstName | lastName | email              | password  | phone      | userStatus |
+      | 9999 | nonExistentUser99999 | Ghost     | User     | ghost@example.com  | Pass@000  | 0000000000 | 0          |
+    Then Response status code should be 404
+    And Response status line contains "Not Found"
+    And Response time less than 2000 ms
+
+Scenario: Update User with Empty Body
+    When I Send PUT request to update user "TestUser" with empty body
+    Then Response status code should be 400
+    And Response status line contains "Bad Request"
+    And Response time less than 2000 ms
+
+# DELETE /user/{username}
+Scenario: Delete User with Valid Username
+    When I Send DELETE request for user "TestUser"
+    Then Response status code should be 200
+    And Response status line contains "200 OK"
+    And Response time less than 2000 ms
+
+Scenario: Delete Non-Existent User
+    When I Send DELETE request for user "nonExistentUser99999"
+    Then Response status code should be 404
+    And Response status line contains "Not Found"
+    And Response time less than 2000 ms
+
+Scenario: Delete User with Invalid Username
+    When I Send DELETE request for user "User@#$%"
+    Then Response status code should be 400
+    And Response status line contains "Bad Request"
+    And Response time less than 2000 ms

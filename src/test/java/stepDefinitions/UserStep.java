@@ -115,4 +115,52 @@ public class UserStep extends BaseTest{
                     .get(IPetStoreEndpoint.USER_LOGIN);
         Assertions.setResponse(response);
     }
+
+    @When("I Send GET logout request")
+    public void logoutUser() {
+        response = RestAssured
+                .given()
+                    .spec(requestSpec)
+                .when()
+                    .get(IPetStoreEndpoint.USER_LOGOUT);
+        Assertions.setResponse(response);
+    }
+
+    @When("I Send PUT request to update user {string} with the following details:")
+    public void updateUser(String username, DataTable dataTable) {
+        Map<String, String> row = dataTable.asMaps().get(0);
+        String body = DataUtility.buildUserJson(row);
+
+        response = RestAssured
+                .given()
+                    .spec(requestSpec)
+                    .pathParam("username", username)
+                    .body(body)
+                .when()
+                    .put(IPetStoreEndpoint.UPDATE_USER);
+        Assertions.setResponse(response);
+    }
+
+    @When("I Send PUT request to update user {string} with empty body")
+    public void updateUserWithEmptyBody(String username) {
+        response = RestAssured
+                .given()
+                    .spec(requestSpec)
+                    .pathParam("username", username)
+                    .body("{}")
+                .when()
+                    .put(IPetStoreEndpoint.UPDATE_USER);
+        Assertions.setResponse(response);
+    }
+
+    @When("I Send DELETE request for user {string}")
+    public void deleteUser(String username) {
+        response = RestAssured
+                .given()
+                    .spec(requestSpec)
+                    .pathParam("username", username)
+                .when()
+                    .delete(IPetStoreEndpoint.DELETE_USER);
+        Assertions.setResponse(response);
+    }
 }
