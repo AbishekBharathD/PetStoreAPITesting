@@ -3,9 +3,11 @@ package stepDefinitions;
 import base.BaseTest;
 import endpoints.IPetStoreEndpoint;
 import io.cucumber.java.en.*;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.apache.poi.ss.usermodel.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +33,17 @@ public class PetStep extends BaseTest {
     }
 
     @Given("Pet with id {int} exists")
-    public void pet_with_id_exists(int petId) {
-        response = given()
-                .spec(requestSpec)
-                .pathParam("petId", petId)
-                .get(IPetStoreEndpoint.GET_PET_BY_ID);
+public void pet_with_id_exists(int petId) {
 
-        Assertions.setResponse(response);   // ✅ important
-    }
+    String body = "{ \"id\": " + petId + ", \"name\": \"dog\", \"status\": \"available\" }";
+
+    response = given()
+            .spec(requestSpec)
+            .body(body)
+            .post(IPetStoreEndpoint.ADD_PET);
+
+    Assertions.setResponse(response);
+}
 
     /* =========================
        WHEN
@@ -55,7 +60,7 @@ public class PetStep extends BaseTest {
                 .body(body)
                 .post(IPetStoreEndpoint.ADD_PET);
 
-        Assertions.setResponse(response);   // ✅ important
+        Assertions.setResponse(response); 
     }
 
     @When("I send PUT request using test data {string}")
@@ -69,7 +74,7 @@ public class PetStep extends BaseTest {
                 .body(body)
                 .put(IPetStoreEndpoint.UPDATE_PET);
 
-        Assertions.setResponse(response);   // ✅ important
+        Assertions.setResponse(response);   
     }
 
     @When("I send GET request for pet id {int}")
@@ -80,10 +85,75 @@ public class PetStep extends BaseTest {
                 .pathParam("petId", petId)
                 .get(IPetStoreEndpoint.GET_PET_BY_ID);
 
-        Assertions.setResponse(response);   // ✅ important
+        Assertions.setResponse(response);   
     }
 
-    /* =========================
+@When("I send POST request with invalid JSON structure")
+public void send_invalid_json_request() {
+
+    String invalidJson = "{\n" +
+            "\"id\": 3003,\n" +
+            "\"name\": [\"dog\"],\n" +
+            "\"status\": {\"value\":\"available\"}\n" +
+            "}";
+
+    response = given()
+            .spec(requestSpec)
+            .body(invalidJson)
+            .post(IPetStoreEndpoint.ADD_PET);
+
+    Assertions.setResponse(response);
+}
+
+@When("I send GET request for pets by status {string}")
+public void get_pets_by_status(String status) {
+
+    response = given()
+            .spec(requestSpec)
+            .queryParam("status", status)
+            .get(IPetStoreEndpoint.FIND_BY_STATUS);
+
+    Assertions.setResponse(response);
+}
+
+@When("I upload image for pet id {int}")
+public void upload_image(int petId) {
+
+    File file = new File(System.getProperty("user.dir") + "/src/test/resources/Dog.jpg");
+
+    response = given()
+            .spec(requestSpec)
+            .contentType(ContentType.MULTIPART)
+            .pathParam("petId", petId)
+            .multiPart("file", file)
+            .post(IPetStoreEndpoint.UPLOAD_IMAGE);
+
+    Assertions.setResponse(response);
+}
+
+
+@When("I send GET request for invalid pet id {string}")
+public void get_pet_string_id(String petId) {
+    response = given()
+            .spec(requestSpec)
+            .pathParam("petId", petId)
+            .get(IPetStoreEndpoint.GET_PET_BY_ID);
+
+    Assertions.setResponse(response);
+}
+
+@When("I send DELETE request for pet id {int}")
+public void delete_pet(int petId) {
+    response = given()
+            .spec(requestSpec)
+            .pathParam("petId", petId)
+            .delete(IPetStoreEndpoint.DELETE_PET);
+
+    Assertions.setResponse(response);
+}
+
+
+/* =========================
        EXCEL HANDLING
        ========================= */
 

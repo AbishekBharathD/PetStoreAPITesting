@@ -10,6 +10,9 @@ public interface IPetStoreEndpoint {
 	public static final String GET_PET_BY_ID = "/pet/{petId}";
 	public static final String UPDATE_PET_USING_FORM = "/pet/petId";
 	public static final String DELETE_PET_BY_ID = "/pet/{petId}";
+	public static final String FIND_BY_STATUS = "/pet/findByStatus";
+    public static final String DELETE_PET = "/pet/{petId}";
+    public static final String UPLOAD_IMAGE = "/pet/{petId}/uploadImage";
 	
 	/*----------------------Store Module-----------------------*/
 	public static final String GET_INVENTORY = "/store/inventory";
