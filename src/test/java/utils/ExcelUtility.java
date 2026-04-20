@@ -32,10 +32,12 @@ public class ExcelUtility {
 
 	    for (int i = 1; i < rowCount; i++) {
 	        for (int j = 0; j < colCount; j++) {
-	            data[i - 1][j] = sheet.getRow(i).getCell(j).toString();
+
+	            String cellValue = sheet.getRow(i).getCell(j).toString();
+
+	            data[i - 1][j] = cellValue;   // ALWAYS STRING
 	        }
 	    }
-
 	    return data;
 	}
 	
