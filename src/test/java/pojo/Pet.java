@@ -2,7 +2,7 @@ package pojo;
 
 public class Pet {
 
-    private int id;
+    private Integer id;
     private String name;
     private String status;
 
@@ -10,18 +10,18 @@ public class Pet {
     public Pet() {}
 
     // 🔹 Parameterized constructor
-    public Pet(int id, String name, String status) {
+    public Pet(Integer id, String name, String status) {
         this.id = id;
         this.name = name;
         this.status = status;
     }
 
     // 🔹 Getters & Setters
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

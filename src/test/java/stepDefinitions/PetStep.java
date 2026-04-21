@@ -7,8 +7,11 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.io.File;
 import java.util.*;
+import static org.hamcrest.Matchers.*;
+
 
 import pojo.Pet;
+import utils.ExcelUtility;
 
 import static io.restassured.RestAssured.given;
 
@@ -16,7 +19,7 @@ public class PetStep extends BaseTest {
 
     private Response response;
     // private int currentPetId; // used for request chaining
-    static private Pet pet;
+    // static private Pet pet;
     static List<Integer> petIds = new ArrayList<>();
 
     /* =========================
@@ -31,14 +34,27 @@ public class PetStep extends BaseTest {
         Assertions.setResponse(response);
     }
 
-    @When("user sends POST request to add pet with {int} {string} {string}")
-    public void add_pet(int id, String name, String status) {
+    @When("user sends POST request to add pet")
+    public void add_pet() {
         
-        pet = new Pet(id, name, status);
+       Object[][] excelData = ExcelUtility.getSheetData("testData.xlsx", "PetModule");
 
-        response = given().spec(requestSpec).body(pet).post(IPetStoreEndpoint.ADD_PET);
-        Assertions.setResponse(response);
-        petIds.add(response.jsonPath().getInt("id"));
+        for (int rowNum = 0; rowNum < excelData.length; rowNum++) {
+
+            String id = excelData[rowNum][0].toString();
+            String name = excelData[rowNum][1].toString();
+            String status = excelData[rowNum][2].toString();
+
+            int petId = (int) Double.parseDouble(id);
+
+            Pet pet = new Pet(petId, name, status);
+
+            response = given().spec(requestSpec).body(pet).post(IPetStoreEndpoint.ADD_PET);
+            Assertions.setResponse(response);
+            petIds.add(response.jsonPath().getInt("id"));
+            response.then().log().all();
+        }
+        
     }
 
     @When("user sends GET request to fetch pet by existing id")
@@ -48,6 +64,7 @@ public class PetStep extends BaseTest {
                 .pathParam("petId", id)
                 .get(IPetStoreEndpoint.GET_PET_BY_ID);
             Assertions.setResponse(response);
+            response.then().log().all();
         }
         
     }
@@ -55,13 +72,17 @@ public class PetStep extends BaseTest {
     @When("user sends PUT request to update pet")
     public void update_pet() {
         for(Integer id : petIds){
+            Pet pet = new Pet();
             pet.setId(id);
+            pet.setName("UpdatedPet");
             pet.setStatus("sold");
             response = given().spec(requestSpec).body(pet).put(IPetStoreEndpoint.UPDATE_PET);
         Assertions.setResponse(response);
+        response.then().log().all();
         }
         
     }
+    
 
     @When("user sends DELETE request to delete pet by existing id")
     public void delete_pet_by_existing_id() {
@@ -70,6 +91,7 @@ public class PetStep extends BaseTest {
                 .pathParam("petId", id)
                 .delete(IPetStoreEndpoint.DELETE_PET);
         Assertions.setResponse(response);
+        response.then().log().all();
     }
 
     /* =========================
@@ -83,6 +105,8 @@ public class PetStep extends BaseTest {
                 .pathParam("petId", id)
                 .get(IPetStoreEndpoint.GET_PET_BY_ID);
             Assertions.setResponse(response);
+
+            response.then().log().all();
         }
         
     }
@@ -133,4 +157,22 @@ public class PetStep extends BaseTest {
         }
         Assertions.setResponse(response);
     }
+    @Then("Response body should reflect updated values")
+public void validate_updated_pet() {
+
+    response.then()
+            .assertThat()
+
+            // ✅ Check updated field
+            .body("status", equalTo("sold"))
+
+           
+
+            // ✅ Optional: type validation
+            .body("id", instanceOf(Integer.class))
+            .body("name", instanceOf(String.class))
+            .body("status", instanceOf(String.class));
 }
+}
+
+
