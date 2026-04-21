@@ -132,7 +132,7 @@ public class UserStep extends BaseTest{
         String userName, firstName, lastName, email, password, phone;
         int id, userStatus;
 
-        ExcelUtility.loadExcel("user.xlsx", "Sheet1");
+        ExcelUtility.loadExcel("testData.xlsx", "UserModule");
         id = Integer.parseInt(ExcelUtility.getCellData(1, 0));
         userName = ExcelUtility.getCellData(1, 1);
         firstName = ExcelUtility.getCellData(1,2);
