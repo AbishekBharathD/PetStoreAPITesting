@@ -2,6 +2,8 @@ package utils;
 
 import java.io.FileInputStream;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -40,5 +42,10 @@ public class ExcelUtility {
 	    }
 	    return data;
 	}
-	
+
+	public static String getCellData(int rowNum, int colNum) {
+	        Cell cell = sheet.getRow(rowNum).getCell(colNum);
+			DataFormatter formatter = new DataFormatter();
+	        return  formatter.formatCellValue(cell);
+	}
 }
