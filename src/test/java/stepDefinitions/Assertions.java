@@ -5,6 +5,9 @@ import io.restassured.response.Response;
 import org.testng.asserts.SoftAssert;
 import hooks.Hooks;
 import io.cucumber.java.Scenario;
+import org.testng.asserts.SoftAssert;
+import hooks.Hooks;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 
 public class Assertions {
