@@ -65,10 +65,15 @@ Feature: Manage store operations including inventory and pet orders
 		And Validate "Error" schema
 		And Response status line contains "400 Bad Request"
 		
-	Scenario: Deleting order with invalid order ID
-		When user sends DELETE request to delete the order with invalid order id "abc"
+	Scenario Outline: Deleting order with invalid order ID
+		When user sends DELETE request to delete the order with invalid order id <id>
 		Then Response status code should be 400
 		And Response time less than 5000 ms
 		And Validate "Error" schema
 		And Response status line contains "400 Bad Request"
+		
+		Examples: 
+		|id|
+		|abc|
+
 		

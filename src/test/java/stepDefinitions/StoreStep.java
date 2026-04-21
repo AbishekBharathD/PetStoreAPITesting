@@ -1,10 +1,13 @@
 package stepDefinitions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import base.BaseTest;
 import endpoints.IPetStoreEndpoint;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -114,13 +117,14 @@ public class StoreStep extends BaseTest{
 	
 	@When("user sends POST request to create a order with invalid id {string}")
 	public void createOrderByInvalidIdType(String id) {
+		
 		response = RestAssured
 								.given()
 									.spec(requestSpec)
 									.body("{\r\n"
 											+ "  \"id\": "+id+",\r\n"
-											+ "  \"petId\": 101,\r\n"
-											+ "  \"quantity\": 3\r\n"
+											+ "  \"petId\": 1001,\r\n"
+											+ "  \"quantity\": 2\r\n"
 											+ "}")
 								.when()
 									.post(IPetStoreEndpoint.CREATE_ORDER);
@@ -173,8 +177,8 @@ public class StoreStep extends BaseTest{
 		}
 	}
 	
-	@When("user sends DELETE request to delete the order with invalid order id {string}")
-	public void deleteOrderByNonExistOrderId(String id) {
+	@When("user sends DELETE request to delete the order with invalid order id {}")
+	public void deleteOrderByNonExistOrderId(Object id) {
 			response = RestAssured
 								.given()
 									.spec(requestSpec)
