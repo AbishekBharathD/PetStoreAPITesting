@@ -7,7 +7,7 @@
 Feature: User Module Testing
 
 # POST /user
-Scenario: Create User with Valid Payload
+Scenario Outline: Create User with Valid Payload
     When I Send POST request to create a user "<id>" "<username>" "<firstName>" "<lastName>" "<email>" "<password>" "<phone>" "<userStatus>":
     Then Response status code should be 200
     And Response status line contains "200 OK"
