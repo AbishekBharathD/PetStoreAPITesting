@@ -2,6 +2,7 @@ package stepDefinitions;
 
 import base.BaseTest;
 import endpoints.IPetStoreEndpoint;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.*;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -20,7 +21,7 @@ public class PetStep extends BaseTest {
     private Response response;
     // private int currentPetId; // used for request chaining
     // static private Pet pet;
-    static List<Integer> petIds = new ArrayList<>();
+    Integer petId;
 
     /* =========================
        WHEN - CRUD Flow
@@ -34,61 +35,57 @@ public class PetStep extends BaseTest {
         Assertions.setResponse(response);
     }
 
-    @When("user sends POST request to add pet")
-    public void add_pet() {
+    @When("user sends POST request using excel row {int}")
+    public void add_pet(int rowNum) {
         
        Object[][] excelData = ExcelUtility.getSheetData("testData.xlsx", "PetModule");
 
-        for (int rowNum = 0; rowNum < excelData.length; rowNum++) {
-
+       
             String id = excelData[rowNum][0].toString();
             String name = excelData[rowNum][1].toString();
             String status = excelData[rowNum][2].toString();
 
-            int petId = (int) Double.parseDouble(id);
-
-            Pet pet = new Pet(petId, name, status);
+            Pet pet = new Pet(((int) Double.parseDouble(id)), name, status);
 
             response = given().spec(requestSpec).body(pet).post(IPetStoreEndpoint.ADD_PET);
             Assertions.setResponse(response);
-            petIds.add(response.jsonPath().getInt("id"));
+           petId = response.jsonPath().getInt("id");
             response.then().log().all();
-        }
         
     }
 
     @When("user sends GET request to fetch pet by existing id")
     public void get_pet_by_existing_id() {
-        for(Integer id : petIds){
+        
             response = given().spec(requestSpec)
-                .pathParam("petId", id)
+                .pathParam("petId", petId)
                 .get(IPetStoreEndpoint.GET_PET_BY_ID);
             Assertions.setResponse(response);
             response.then().log().all();
-        }
+        
         
     }
 
     @When("user sends PUT request to update pet")
     public void update_pet() {
-        for(Integer id : petIds){
+        
             Pet pet = new Pet();
-            pet.setId(id);
+            pet.setId(petId);
             pet.setName("UpdatedPet");
             pet.setStatus("sold");
             response = given().spec(requestSpec).body(pet).put(IPetStoreEndpoint.UPDATE_PET);
         Assertions.setResponse(response);
         response.then().log().all();
-        }
+        
         
     }
     
 
     @When("user sends DELETE request to delete pet by existing id")
     public void delete_pet_by_existing_id() {
-        for(Integer id : petIds)
+        
         response = given().spec(requestSpec)
-                .pathParam("petId", id)
+                .pathParam("petId", petId)
                 .delete(IPetStoreEndpoint.DELETE_PET);
         Assertions.setResponse(response);
         response.then().log().all();
@@ -100,14 +97,14 @@ public class PetStep extends BaseTest {
 
     @When("user sends GET request to fetch pet with non existing id")
     public void get_pet_non_existing() {
-        for(Integer id : petIds){
+        
             response = given().spec(requestSpec)
-                .pathParam("petId", id)
+                .pathParam("petId", petId)
                 .get(IPetStoreEndpoint.GET_PET_BY_ID);
             Assertions.setResponse(response);
 
             response.then().log().all();
-        }
+        
         
     }
 
@@ -138,6 +135,31 @@ public class PetStep extends BaseTest {
         Assertions.setResponse(response);
     }
 
+    @When("user sends POST request with pet data")
+public void add_pet(DataTable dataTable) {
+
+    List<Map<String, String>> data = dataTable.asMaps(String.class, String.class);
+
+    for (Map<String, String> row : data) {
+
+        int id = Integer.parseInt(row.get("id"));
+        String name = row.get("name");
+        String status = row.get("status");
+
+        Pet pet = new Pet(id, name, status);
+
+        response = given()
+                .spec(requestSpec)
+                .log().all()
+                .body(pet)
+                .post(IPetStoreEndpoint.ADD_PET);
+
+        Assertions.setResponse(response);
+
+        response.then().log().all();
+    }
+}
+
     /* =========================
        WHEN - Negative Data Cases
        ========================= */
@@ -163,12 +185,8 @@ public void validate_updated_pet() {
     response.then()
             .assertThat()
 
-            // ✅ Check updated field
             .body("status", equalTo("sold"))
 
-           
-
-            // ✅ Optional: type validation
             .body("id", instanceOf(Integer.class))
             .body("name", instanceOf(String.class))
             .body("status", instanceOf(String.class));

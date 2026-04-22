@@ -5,41 +5,48 @@
 # ---------------------------------------------------------
 Feature: Manage pet operations including creation, update, retrieval, and deletion
 
-  Scenario Outline: Adding Pet
-    When user sends POST request to add pet
+  Scenario Outline: Add pet using Excel
+    When user sends POST request using excel row <rowNumber>
     Then Response status code should be 200
-    And Response time less than 5000 ms
-    And Response status line contains "200 OK"
-
-  Scenario: Get Vaild Pet
     When user sends GET request to fetch pet by existing id
     Then Response status code should be 200
     And Response time less than 5000 ms
     And Response status line contains "200 OK"
-
-  Scenario: Update Vaild Pet
     When user sends PUT request to update pet
     Then Response status code should be 200
     And Response time less than 5000 ms
     And Response status line contains "200 OK"
-
-  Scenario: Verify updated pet details
     When user sends PUT request to update pet
     And user sends GET request to fetch pet by existing id
     Then Response status code should be 200
     And Response body should reflect updated values
-
-  Scenario: Delete the created Pet
     When user sends DELETE request to delete pet by existing id
     Then Response status code should be 200
     And Response time less than 5000 ms
     And Response status line contains "200 OK"
-
-  Scenario: Get the deleted Pet
     When user sends GET request to fetch pet with non existing id
     Then Response status code should be 404
     And Response time less than 5000 ms
     And Response status line contains "404 Not Found"
+
+    Examples:
+      | rowNumber |
+      |         0 |
+      |         1 |
+      |         2 |
+      |         3 |
+      |         4 |
+      |         5 |
+
+  Scenario: Adding Pet using DataTable
+    When user sends POST request with pet data
+      | id   | name   | status    |
+      | 2001 | doggie | available |
+      | 2002 | cat    | sold      |
+      | 2003 | bunny  | pending   |
+    Then Response status code should be 200
+    And Response time less than 5000 ms
+    And Response status line contains "200 OK"
 
   Scenario: Create pet with missing mandatory data
     When user sends POST request using test data "TC_PET_07"
@@ -53,11 +60,16 @@ Feature: Manage pet operations including creation, update, retrieval, and deleti
     And Response time less than 5000 ms
     And Response status line contains "400 Bad Request"
 
-  Scenario: Retrieve pet with invalid ID
-    When user sends GET request for invalid pet id "abc"
+  Scenario Outline: Retrieve pet with invalid ID
+    When user sends GET request for invalid pet id "<id>"
     Then Response status code should be 400
     And Response time less than 5000 ms
     And Response status line contains "400 Bad Request"
+
+    Examples:
+      | id   |
+      | abc  |
+      | -123 |
 
   Scenario: Upload image for valid pet
     When user uploads image for pet id 2001
