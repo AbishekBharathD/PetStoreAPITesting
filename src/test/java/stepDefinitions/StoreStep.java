@@ -1,6 +1,5 @@
 package stepDefinitions;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import base.BaseTest;

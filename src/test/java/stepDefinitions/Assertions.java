@@ -1,14 +1,12 @@
 package stepDefinitions;
 
-import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
-import io.restassured.response.Response;
 import org.testng.asserts.SoftAssert;
-import hooks.Hooks;
-import io.cucumber.java.Scenario;
-import org.testng.asserts.SoftAssert;
+
 import hooks.Hooks;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import io.restassured.response.Response;
 
 public class Assertions {
 
