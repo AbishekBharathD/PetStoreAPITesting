@@ -1,6 +1,13 @@
 package utils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
+import org.joda.time.Instant;
+
+import pojo.Order;
 
 public class DataUtility {
     public static String buildUserJson(int id, String username, String firstName, String lastName,
@@ -23,5 +30,24 @@ public class DataUtility {
                 row.get("phone"),
                 Integer.parseInt(row.get("userStatus"))
         );
+    }
+    
+    public static Order getOrderRequestBody() {
+    	Order order = new Order();
+    	Random random = new Random();
+    	Integer orderId = random.nextInt(1000)+1;
+    	Integer petId = random.nextInt(1000)+1;
+    	Integer quantity = random.nextInt(10)+1;
+    	Boolean complete = random.nextBoolean();
+    	String shipDate = Instant.now().toString();
+    	List<String> listOfStatus = Arrays.asList("available", "pending", "sold");
+    	String status = listOfStatus.get(random.nextInt(listOfStatus.size()));
+    	order.setId(orderId);
+    	order.setPetId(petId);
+    	order.setQuantity(quantity);
+    	order.setShipDate(shipDate);
+    	order.setStatus(status);
+    	order.setComplete(complete);
+    	return order;
     }
 }

@@ -9,12 +9,13 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import pojo.Order;
+import utils.DataUtility;
 import utils.ExcelUtility;
+import utils.ScenarioContext;
 
 public class StoreStep extends BaseTest {
 
 	Response response;
-	int orderId;
 
 	@When("user sends GET request to fetch store inventory")
 	public void getInventory() {
@@ -25,9 +26,23 @@ public class StoreStep extends BaseTest {
 		Assertions.setResponse(response);
 
 	}
+	
+	@When("user sends POST request to create a order")
+	public void createOrderWithFullBody() {
+		Order order = DataUtility.getOrderRequestBody();
+		response = RestAssured
+								.given()
+									.spec(requestSpec)
+									.body(order)
+								.when()
+									.post(IPetStoreEndpoint.CREATE_ORDER);
+		response.then().log().all();
+		Assertions.setResponse(response);
+		ScenarioContext.set("orderId", response.jsonPath().getInt("id"));
+	}
 
 	@When("user sends POST request to place order with {int}")
-	public void createOrderWithFullBody(int rowNum) {
+	public void createOrder(int rowNum) {
 
 		Object[][] data = ExcelUtility.getSheetData("testData.xlsx", "StoreModule");
 		String id = data[rowNum][0].toString();
@@ -50,7 +65,7 @@ public class StoreStep extends BaseTest {
 		response.then().log().all();
 
 		Assertions.setResponse(response);
-		orderId = response.jsonPath().getInt("id");
+		ScenarioContext.set("orderId", response.jsonPath().getInt("id"));
 
 	}
 
@@ -67,7 +82,7 @@ public class StoreStep extends BaseTest {
 	@When("user sends GET request to get order by existing id")
 	public void getOrderByExistingId() {
 
-		response = RestAssured.given().spec(requestSpec).pathParam("orderId", orderId).when()
+		response = RestAssured.given().spec(requestSpec).pathParam("orderId", ScenarioContext.get("orderId")).when()
 				.get(IPetStoreEndpoint.GET_ORDER_BY_ID);
 
 		response.then().log().all();
@@ -76,7 +91,7 @@ public class StoreStep extends BaseTest {
 
 	@When("user sends DELETE request to delete order by existing id")
 	public void deleteOrderByExistingId() {
-		response = RestAssured.given().spec(requestSpec).pathParam("orderId", orderId).when()
+		response = RestAssured.given().spec(requestSpec).pathParam("orderId", ScenarioContext.get("orderId")).when()
 				.delete(IPetStoreEndpoint.DELETE_ORDER_ID);
 		Assertions.setResponse(response);
 	}
@@ -145,7 +160,7 @@ public class StoreStep extends BaseTest {
 
 	@When("user sends GET request to fetch the order with non existing order id")
 	public void getOrderByNonExistValidOrderId() {
-		response = RestAssured.given().spec(requestSpec).pathParam("orderId", orderId).when()
+		response = RestAssured.given().spec(requestSpec).pathParam("orderId", ScenarioContext.get("orderId")).when()
 				.get(IPetStoreEndpoint.GET_ORDER_BY_ID);
 
 		response.then().log().all();
