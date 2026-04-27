@@ -13,10 +13,10 @@ public class Hooks extends BaseTest{
     public static Scenario scenario;
 
 	@Before
-    public void beforeScenario(Scenario scenario) {
+    public void beforeScenario(Scenario s) {
         setup();
-        Hooks.softAssert = new SoftAssert();
-        Hooks.scenario = scenario;
+        softAssert = new SoftAssert();
+        scenario = s;
         
         System.out.println("----- Test Started -----");
     }

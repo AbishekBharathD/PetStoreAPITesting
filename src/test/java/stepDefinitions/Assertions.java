@@ -1,9 +1,6 @@
 package stepDefinitions;
 
-import org.testng.asserts.SoftAssert;
-
 import hooks.Hooks;
-import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import io.restassured.response.Response;
@@ -11,8 +8,6 @@ import io.restassured.response.Response;
 public class Assertions {
 
     public static Response response;
-    SoftAssert softAssert = new SoftAssert();
-    Scenario scenario;
 
     public static void setResponse(Response r) {
         response = r;
