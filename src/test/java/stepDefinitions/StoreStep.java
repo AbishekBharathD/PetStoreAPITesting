@@ -88,6 +88,16 @@ public class StoreStep extends BaseTest {
 		response.then().log().all();
 		Assertions.setResponse(response);
 	}
+	
+	@When("user sends GET request to fetch the order with non existing order id {int}")
+	public void getOrderByNonExistingId(int id) {
+
+		response = RestAssured.given().spec(requestSpec).pathParam("orderId", id).when()
+				.get(IPetStoreEndpoint.GET_ORDER_BY_ID);
+
+		response.then().log().all();
+		Assertions.setResponse(response);
+	}
 
 	@When("user sends DELETE request to delete order by existing id")
 	public void deleteOrderByExistingId() {

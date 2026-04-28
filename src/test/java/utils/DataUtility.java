@@ -40,7 +40,7 @@ public class DataUtility {
     	Integer quantity = random.nextInt(10)+1;
     	Boolean complete = random.nextBoolean();
     	String shipDate = Instant.now().toString();
-    	List<String> listOfStatus = Arrays.asList("available", "pending", "sold");
+    	List<String> listOfStatus = Arrays.asList("placed", "approved", "delivered");
     	String status = listOfStatus.get(random.nextInt(listOfStatus.size()));
     	order.setId(orderId);
     	order.setPetId(petId);
